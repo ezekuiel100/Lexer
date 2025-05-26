@@ -17,7 +17,6 @@ main :: proc() {
 		token := createToken()
 
 		fmt.println(token)
-
 	}
 }
 
@@ -81,16 +80,22 @@ createToken :: proc() -> token {
 			}
 
 			return token{type = "INTEGER", value = input[start:position]}
+		} else if isLetter() {
+			fmt.println("letter")
 		} else {
 			tok = token {
-				type  = "EOF",
-				value = " ",
+				type  = "ILLEGAL",
+				value = char,
 			}
 		}
 	}
 
 	readChar()
 	return tok
+}
+
+newToken :: proc(type, value: string) -> token {
+	return token{type = type, value = value}
 }
 
 
@@ -112,4 +117,10 @@ skipWhiteSpace :: proc() {
 
 isNumber :: proc() -> bool {
 	return char[0] >= 48 && char[0] <= 57
+}
+
+
+isLetter :: proc() -> bool {
+	ch := char[0]
+	return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_'
 }
