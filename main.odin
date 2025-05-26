@@ -11,43 +11,75 @@ token :: struct {
 }
 
 position := 0
-char: rune
+char := rune(input[position])
 
 main :: proc() {
-	for position < len(input) - 1 {
+	for position < len(input) {
 		token := createToken()
 		fmt.println(token)
+
 	}
 }
 
 
 createToken :: proc() -> token {
-	readChar()
+	tok: token
 
 	switch char {
 	case '=':
-		return token{type = "ASSIGN", value = char}
+		tok = token {
+			type  = "ASSIGN",
+			value = char,
+		}
 	case '(':
-		return token{type = "LPAREN", value = char}
+		tok = token {
+			type  = "LPAREN",
+			value = char,
+		}
 	case ')':
-		return token{type = "RPAREN", value = char}
+		tok = token {
+			type  = "RPAREN",
+			value = char,
+		}
 	case '{':
-		return token{type = "LBRACE", value = char}
+		tok = token {
+			type  = "LBRACE",
+			value = char,
+		}
 	case '}':
-		return token{type = "RBRACE", value = char}
+		tok = token {
+			type  = "RBRACE",
+			value = char,
+		}
 	case '-':
-		return token{type = "MINUS", value = char}
+		tok = token {
+			type  = "MINUS",
+			value = char,
+		}
 	case '+':
-		return token{type = "PLUS", value = char}
+		tok = token {
+			type  = "PLUS",
+			value = char,
+		}
 	case '*':
-		return token{type = "ASTERISK", value = char}
+		tok = token {
+			type  = "ASTERISK",
+			value = char,
+		}
 	case '/':
-		return token{type = "SLASH", value = char}
+		tok = token {
+			type  = "SLASH",
+			value = char,
+		}
 	case:
-		return token{type = "EOF", value = ' '}
+		tok = token {
+			type  = "EOF",
+			value = ' ',
+		}
 	}
 
-	return token{}
+	readChar()
+	return tok
 }
 
 
