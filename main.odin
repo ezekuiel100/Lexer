@@ -11,8 +11,14 @@ token :: struct {
 	value: string,
 }
 
-keywords := map[string]string{
-	 "let"= "LET"
+keywords := map[string]string {
+	"let"    = "LET",
+	"func"   = "FUNCTION",
+	"true"   = "TRUE",
+	"false"  = "FALSE",
+	"if"     = "IF",
+	"else"   = "ELSE",
+	"return" = "RETURN",
 }
 
 position := 0
@@ -87,11 +93,13 @@ createToken :: proc() -> token {
 
 			return token{type = "INT", value = input[start:position]}
 		} else if isLetter() {
-			tok = token{value = readIdentifier()}
-				
+			tok = token {
+				value = readIdentifier(),
+			}
+
 			if kw, ok := keywords[tok.value]; ok {
-			tok.type =  keywords[tok.value]
-			}else{
+				tok.type = keywords[tok.value]
+			} else {
 				tok.type = "IDENT"
 			}
 
@@ -139,12 +147,12 @@ isLetter :: proc() -> bool {
 	return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_'
 }
 
-readIdentifier:: proc() -> string{
-start := position
+readIdentifier :: proc() -> string {
+	start := position
 
-for isLetter(){
-	readChar()
-}
+	for isLetter() {
+		readChar()
+	}
 
-return input[start:position]
+	return input[start:position]
 }
