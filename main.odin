@@ -1,3 +1,5 @@
+#+feature dynamic-literals
+
 package main
 
 import "core:fmt"
@@ -7,6 +9,10 @@ input := "let x = (46 * 1)"
 token :: struct {
 	type:  string,
 	value: string,
+}
+
+keywords := map[string]string{
+	 "let"= "LET"
 }
 
 position := 0
@@ -79,9 +85,17 @@ createToken :: proc() -> token {
 				readChar()
 			}
 
-			return token{type = "INTEGER", value = input[start:position]}
+			return token{type = "INT", value = input[start:position]}
 		} else if isLetter() {
-			fmt.println("letter")
+			tok = token{value = readIdentifier()}
+				
+			if kw, ok := keywords[tok.value]; ok {
+			tok.type =  keywords[tok.value]
+			}else{
+				tok.type = "IDENT"
+			}
+
+			return tok
 		} else {
 			tok = token {
 				type  = "ILLEGAL",
@@ -123,4 +137,14 @@ isNumber :: proc() -> bool {
 isLetter :: proc() -> bool {
 	ch := char[0]
 	return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_'
+}
+
+readIdentifier:: proc() -> string{
+start := position
+
+for isLetter(){
+	readChar()
+}
+
+return input[start:position]
 }
