@@ -25,6 +25,7 @@ main :: proc() {
 createToken :: proc() -> token {
 	tok: token
 
+
 	switch char {
 	case '=':
 		tok = token {
@@ -84,6 +85,7 @@ createToken :: proc() -> token {
 
 
 readChar :: proc() {
-	char = rune(input[position])
 	position += 1
+	if position >= len(input) {return}
+	char = rune(input[position])
 }
