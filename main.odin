@@ -111,9 +111,5 @@ skipWhiteSpace :: proc() {
 }
 
 isNumber :: proc() -> bool {
-	if char[0] >= 48 && char[0] <= 57 {
-		return true
-	}
-
-	return false
+	return char[0] >= 48 && char[0] <= 57
 }
