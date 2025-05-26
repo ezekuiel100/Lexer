@@ -26,9 +26,9 @@ char := string(input[position:position + 1])
 
 main :: proc() {
 	for position < len(input) {
-		token := createToken()
+		tok := createToken()
 
-		fmt.println(token)
+		fmt.println(tok)
 	}
 }
 
@@ -93,17 +93,14 @@ createToken :: proc() -> token {
 
 			return token{type = "INT", value = input[start:position]}
 		} else if isLetter() {
-			tok = token {
-				value = readIdentifier(),
+			ident := readIdentifier()
+			typ := "IDENT"
+
+			if kw, ok := keywords[ident]; ok {
+				typ = kw
 			}
 
-			if kw, ok := keywords[tok.value]; ok {
-				tok.type = keywords[tok.value]
-			} else {
-				tok.type = "IDENT"
-			}
-
-			return tok
+			return token{type = typ, value = ident}
 		} else {
 			tok = token {
 				type  = "ILLEGAL",
