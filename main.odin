@@ -4,18 +4,18 @@ import "core:fmt"
 
 input := "let x = (46 * 1)"
 
-
 token :: struct {
 	type:  string,
-	value: rune,
+	value: string,
 }
 
 position := 0
-char := rune(input[position])
+char := string(input[position:position + 1])
 
 main :: proc() {
 	for position < len(input) {
 		token := createToken()
+
 		fmt.println(token)
 
 	}
@@ -27,55 +27,65 @@ createToken :: proc() -> token {
 	skipWhiteSpace()
 
 	switch char {
-	case '=':
+	case "=":
 		tok = token {
 			type  = "ASSIGN",
 			value = char,
 		}
-	case '(':
+	case "(":
 		tok = token {
 			type  = "LPAREN",
 			value = char,
 		}
-	case ')':
+	case ")":
 		tok = token {
 			type  = "RPAREN",
 			value = char,
 		}
-	case '{':
+	case "{":
 		tok = token {
 			type  = "LBRACE",
 			value = char,
 		}
-	case '}':
+	case "}":
 		tok = token {
 			type  = "RBRACE",
 			value = char,
 		}
-	case '-':
+	case "-":
 		tok = token {
 			type  = "MINUS",
 			value = char,
 		}
-	case '+':
+	case "+":
 		tok = token {
 			type  = "PLUS",
 			value = char,
 		}
-	case '*':
+	case "*":
 		tok = token {
 			type  = "ASTERISK",
 			value = char,
 		}
-	case '/':
+	case "/":
 		tok = token {
 			type  = "SLASH",
 			value = char,
 		}
 	case:
-		tok = token {
-			type  = "EOF",
-			value = ' ',
+		if isNumber() {
+			start := position
+
+			for isNumber() {
+				readChar()
+			}
+
+			return token{type = "INTEGER", value = input[start:position]}
+		} else {
+			tok = token {
+				type  = "EOF",
+				value = " ",
+			}
 		}
 	}
 
@@ -86,12 +96,24 @@ createToken :: proc() -> token {
 
 readChar :: proc() {
 	position += 1
-	if position >= len(input) {return}
-	char = rune(input[position])
+
+	if position >= len(input) {
+		char = " "
+	} else {
+		char = string(input[position:position + 1])
+	}
 }
 
 skipWhiteSpace :: proc() {
-	for char == ' ' {
+	for char == " " {
 		readChar()
 	}
+}
+
+isNumber :: proc() -> bool {
+	if char[0] >= 48 && char[0] <= 57 {
+		return true
+	}
+
+	return false
 }
