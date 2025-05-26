@@ -24,7 +24,7 @@ main :: proc() {
 
 createToken :: proc() -> token {
 	tok: token
-
+	skeapWhiteSpace()
 
 	switch char {
 	case '=':
@@ -88,4 +88,10 @@ readChar :: proc() {
 	position += 1
 	if position >= len(input) {return}
 	char = rune(input[position])
+}
+
+skeapWhiteSpace :: proc() {
+	if char == ' ' {
+		readChar()
+	}
 }
