@@ -39,50 +39,23 @@ createToken :: proc() -> token {
 
 	switch char {
 	case "=":
-		tok = token {
-			type  = "ASSIGN",
-			value = char,
-		}
+		tok = newToken("ASSIGN", char)
 	case "(":
-		tok = token {
-			type  = "LPAREN",
-			value = char,
-		}
+		tok = newToken("LPAREN", char)
 	case ")":
-		tok = token {
-			type  = "RPAREN",
-			value = char,
-		}
+		tok = newToken("RPAREN", char)
 	case "{":
-		tok = token {
-			type  = "LBRACE",
-			value = char,
-		}
+		tok = newToken("LBRACE", char)
 	case "}":
-		tok = token {
-			type  = "RBRACE",
-			value = char,
-		}
+		tok = newToken("RBRACE", char)
 	case "-":
-		tok = token {
-			type  = "MINUS",
-			value = char,
-		}
+		tok = newToken("MINUS", char)
 	case "+":
-		tok = token {
-			type  = "PLUS",
-			value = char,
-		}
+		tok = newToken("PLUS", char)
 	case "*":
-		tok = token {
-			type  = "ASTERISK",
-			value = char,
-		}
+		tok = newToken("ASTERISK", char)
 	case "/":
-		tok = token {
-			type  = "SLASH",
-			value = char,
-		}
+		tok = newToken("SLASH", char)
 	case:
 		if isNumber() {
 			start := position
@@ -91,7 +64,7 @@ createToken :: proc() -> token {
 				readChar()
 			}
 
-			return token{type = "INT", value = input[start:position]}
+			return newToken("INT", input[start:position])
 		} else if isLetter() {
 			ident := readIdentifier()
 			typ := "IDENT"
@@ -100,12 +73,9 @@ createToken :: proc() -> token {
 				typ = kw
 			}
 
-			return token{type = typ, value = ident}
+			return newToken(typ, ident)
 		} else {
-			tok = token {
-				type  = "ILLEGAL",
-				value = char,
-			}
+			tok = newToken("ILLEGAL", char)
 		}
 	}
 
