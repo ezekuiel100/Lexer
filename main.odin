@@ -4,11 +4,15 @@ package main
 
 import "core:fmt"
 
-input := "let x = (46 * 1)"
-
 token :: struct {
 	type:  string,
 	value: string,
+}
+
+Lexer :: struct {
+	input:    string,
+	position: int,
+	char:     string,
 }
 
 keywords := map[string]string {
@@ -21,105 +25,112 @@ keywords := map[string]string {
 	"return" = "RETURN",
 }
 
-position := 0
-char := string(input[position:position + 1])
-
 main :: proc() {
-	for position < len(input) {
-		tok := createToken()
-
-		fmt.println(tok)
-	}
+	lexer("let x = (46 * 1)")
 }
 
+lexer :: proc(input: string) {
+	l := new(Lexer)
+	l.input = input
+	l.position = 0
+	l.char = string(input[l.position:l.position + 1])
 
-createToken :: proc() -> token {
-	tok: token
-	skipWhiteSpace()
 
-	switch char {
-	case "=":
-		tok = newToken("ASSIGN", char)
-	case "(":
-		tok = newToken("LPAREN", char)
-	case ")":
-		tok = newToken("RPAREN", char)
-	case "{":
-		tok = newToken("LBRACE", char)
-	case "}":
-		tok = newToken("RBRACE", char)
-	case "-":
-		tok = newToken("MINUS", char)
-	case "+":
-		tok = newToken("PLUS", char)
-	case "*":
-		tok = newToken("ASTERISK", char)
-	case "/":
-		tok = newToken("SLASH", char)
-	case:
-		if isNumber() {
-			start := position
+	createToken :: proc(l: ^Lexer) -> token {
+		tok: token
+		skipWhiteSpace(l)
 
-			for isNumber() {
-				readChar()
+		switch l.char {
+		case "=":
+			tok = newToken("ASSIGN", l.char)
+		case "(":
+			tok = newToken("LPAREN", l.char)
+		case ")":
+			tok = newToken("RPAREN", l.char)
+		case "{":
+			tok = newToken("LBRACE", l.char)
+		case "}":
+			tok = newToken("RBRACE", l.char)
+		case "-":
+			tok = newToken("MINUS", l.char)
+		case "+":
+			tok = newToken("PLUS", l.char)
+		case "*":
+			tok = newToken("ASTERISK", l.char)
+		case "/":
+			tok = newToken("SLASH", l.char)
+		case:
+			if isNumber(l) {
+				start := l.position
+
+				for isNumber(l) {
+					readChar(l)
+				}
+
+				return newToken("INT", l.input[start:l.position])
+			} else if isLetter(l) {
+				ident := readIdentifier(l)
+				typ := "IDENT"
+
+				if kw, ok := keywords[ident]; ok {
+					typ = kw
+				}
+
+				return newToken(typ, ident)
+			} else {
+				tok = newToken("ILLEGAL", l.char)
 			}
+		}
 
-			return newToken("INT", input[start:position])
-		} else if isLetter() {
-			ident := readIdentifier()
-			typ := "IDENT"
+		readChar(l)
+		return tok
+	}
 
-			if kw, ok := keywords[ident]; ok {
-				typ = kw
-			}
+	readChar :: proc(l: ^Lexer) {
+		l.position += 1
 
-			return newToken(typ, ident)
+		if l.position >= len(l.input) {
+			l.char = " "
 		} else {
-			tok = newToken("ILLEGAL", char)
+			l.char = string(l.input[l.position:l.position + 1])
 		}
 	}
 
-	readChar()
-	return tok
-}
-
-newToken :: proc(type, value: string) -> token {
-	return token{type = type, value = value}
-}
-
-
-readChar :: proc() {
-	position += 1
-
-	if position >= len(input) {
-		char = " "
-	} else {
-		char = string(input[position:position + 1])
-	}
-}
-
-skipWhiteSpace :: proc() {
-	for char == " " {
-		readChar()
-	}
-}
-
-isNumber :: proc() -> bool {
-	return char[0] >= 48 && char[0] <= 57
-}
-
-
-isLetter :: proc() -> bool {
-	ch := char[0]
-	return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_'
-}
-
-readIdentifier :: proc() -> string {
-	start := position
-
-	for isLetter() {
-		readChar()
+	newToken :: proc(type, value: string) -> token {
+		return token{type = type, value = value}
 	}
 
-	return input[start:position]
+
+	skipWhiteSpace :: proc(l: ^Lexer) {
+		for l.char == " " {
+			readChar(l)
+		}
+	}
+
+	isNumber :: proc(l: ^Lexer) -> bool {
+		return l.char[0] >= 48 && l.char[0] <= 57
+	}
+
+
+	isLetter :: proc(l: ^Lexer) -> bool {
+		ch := l.char[0]
+		return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_'
+	}
+
+	readIdentifier :: proc(l: ^Lexer) -> string {
+		start := l.position
+
+		for isLetter(l) {
+			readChar(l)
+		}
+
+		return l.input[start:l.position]
+	}
+
+
+	for l.position < len(l.input) {
+		tok := createToken(l)
+
+		fmt.println(tok)
+	}
 }
