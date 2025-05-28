@@ -26,10 +26,11 @@ keywords := map[string]string {
 }
 
 main :: proc() {
-	lexer("let x = (46 * 1)")
+	token := lexer("let x = (46 * 1)")
+	fmt.println(token)
 }
 
-lexer :: proc(input: string) {
+lexer :: proc(input: string) -> [dynamic]token {
 	l := new(Lexer)
 	l.input = input
 	l.position = 0
@@ -127,10 +128,10 @@ lexer :: proc(input: string) {
 		return l.input[start:l.position]
 	}
 
-
+	tok: [dynamic]token
 	for l.position < len(l.input) {
-		tok := createToken(l)
-
-		fmt.println(tok)
+		append(&tok, createToken(l))
 	}
+
+	return tok
 }
