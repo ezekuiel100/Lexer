@@ -90,46 +90,6 @@ lexer :: proc(input: string) -> ([dynamic]token, ^Lexer) {
 		return tok
 	}
 
-	readChar :: proc(l: ^Lexer) {
-		l.position += 1
-
-		if l.position >= len(l.input) {
-			l.char = " "
-		} else {
-			l.char = string(l.input[l.position:l.position + 1])
-		}
-	}
-
-	newToken :: proc(type, value: string) -> token {
-		return token{type = type, value = value}
-	}
-
-
-	skipWhiteSpace :: proc(l: ^Lexer) {
-		for l.char == " " {
-			readChar(l)
-		}
-	}
-
-	isNumber :: proc(l: ^Lexer) -> bool {
-		return l.char[0] >= 48 && l.char[0] <= 57
-	}
-
-
-	isLetter :: proc(l: ^Lexer) -> bool {
-		ch := l.char[0]
-		return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_'
-	}
-
-	readIdentifier :: proc(l: ^Lexer) -> string {
-		start := l.position
-
-		for isLetter(l) {
-			readChar(l)
-		}
-
-		return l.input[start:l.position]
-	}
 
 	tok: [dynamic]token
 	for l.position < len(l.input) {
@@ -137,4 +97,45 @@ lexer :: proc(input: string) -> ([dynamic]token, ^Lexer) {
 	}
 
 	return tok, l
+}
+
+readChar :: proc(l: ^Lexer) {
+	l.position += 1
+
+	if l.position >= len(l.input) {
+		l.char = " "
+	} else {
+		l.char = string(l.input[l.position:l.position + 1])
+	}
+}
+
+newToken :: proc(type, value: string) -> token {
+	return token{type = type, value = value}
+}
+
+
+skipWhiteSpace :: proc(l: ^Lexer) {
+	for l.char == " " {
+		readChar(l)
+	}
+}
+
+isNumber :: proc(l: ^Lexer) -> bool {
+	return l.char[0] >= 48 && l.char[0] <= 57
+}
+
+
+isLetter :: proc(l: ^Lexer) -> bool {
+	ch := l.char[0]
+	return ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch == '_'
+}
+
+readIdentifier :: proc(l: ^Lexer) -> string {
+	start := l.position
+
+	for isLetter(l) {
+		readChar(l)
+	}
+
+	return l.input[start:l.position]
 }
