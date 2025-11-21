@@ -17,14 +17,10 @@ my_test :: proc(t: ^testing.T) {
 		token{type = "INT", value = "2"},
 	}
 
-	tok, l := lexer("let y = (3 + 4) * 2")
-	defer free(l)
+	tok := lexer("let y = (3 + 4) * 2")
 	defer delete(tok)
-
 
 	for i in 0 ..< len(tok) {
 		testing.expect_value(t, tok[i], res[i])
 	}
-
-
 }
